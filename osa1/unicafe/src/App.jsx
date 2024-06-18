@@ -14,16 +14,15 @@ const Statistics = (props) => {
         return props.good + props.neutral + props.bad;
     };
 
-	
     const StatisticLine = (props) => {
         if (props.text === "good") {
-            return <p>good {props.value}</p>;
+            return props.value;
         }
         if (props.text === "neutral") {
-            return <p>neutral {props.value}</p>;
+            return props.value;
         }
         if (props.text == "bad") {
-            return <p>bad {props.value}</p>;
+            return props.value;
         }
     };
 
@@ -31,17 +30,49 @@ const Statistics = (props) => {
         return (
             <div>
                 <h1>Statistics</h1>
-                <StatisticLine text="good" value={props.good} />
-                <StatisticLine text="neutral" value={props.neutral} />
-                <StatisticLine text="bad" value={props.bad} />
-                <p>all {props.good + props.neutral + props.bad}</p>
-                <p>average {Average()}</p>
-                <p>
-                    positive{" "}
-                    {(props.good / (props.good + props.neutral + props.bad)) *
-                        100}{" "}
-                    %
-                </p>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>good</td>
+                            <td>
+                                <StatisticLine text="good" value={props.good} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>neutral</td>
+                            <td>
+                                <StatisticLine
+                                    text="neutral"
+                                    value={props.neutral}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>bad</td>
+                            <td>
+                                <StatisticLine text="bad" value={props.bad} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>all</td>
+                            <td>{props.good + props.neutral + props.bad}</td>
+                        </tr>
+                        <tr>
+                            <td>average</td>
+                            <td>{Average()}</td>
+                        </tr>
+                        <tr>
+                            <td>positive</td>
+                            <td>
+                                {(props.good /
+                                    (props.good + props.neutral + props.bad)) *
+                                    100}{" "}
+                                %
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         );
     } else {
@@ -60,7 +91,7 @@ const App = () => {
     const [bad, setBad] = useState(0);
 
     const Button = (props) => {
-		const value = props.text
+        const value = props.text;
         if (value === "good") {
             return <button onClick={() => setGood(good + 1)}>Good</button>;
         }
