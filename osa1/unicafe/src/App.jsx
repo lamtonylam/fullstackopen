@@ -110,7 +110,7 @@ const App = () => {
             <h2>give feedback</h2>
             <Button text="good"></Button>
             <Button text="neutral"></Button>
-            <button onClick={() => setBad(bad + 1)}>Bad</button>
+            <Button text="bad"></Button>
             <Statistics good={good} neutral={neutral} bad={bad} />
         </div>
     );
