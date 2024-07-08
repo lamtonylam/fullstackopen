@@ -12,7 +12,6 @@ const App = () => {
         } else {
             const personObject = {
                 name: newName,
-                id: persons.length + 1,
             };
 
             setPersons(persons.concat(personObject));
