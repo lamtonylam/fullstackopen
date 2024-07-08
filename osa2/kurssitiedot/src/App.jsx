@@ -63,7 +63,7 @@ const App = () => {
     const Total = (props) => {
         const courses = props.course.parts;
 
-        var totalamount = courses.reduce(function (sum, course) {
+        const totalamount = courses.reduce(function (sum, course) {
             return sum + course.exercises;
         }, 0);
 
