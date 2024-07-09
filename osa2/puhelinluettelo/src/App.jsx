@@ -50,6 +50,7 @@ const App = () => {
             <h2>Phonebook</h2>
             Filter:
             <input value={filter} onChange={handleFilterChange}></input>
+            <h2>add a new</h2>
             <form onSubmit={addName}>
                 <div>
                     name:
