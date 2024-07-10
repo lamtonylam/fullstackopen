@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import noteService from "./services/notes";
+import notes from "./services/notes";
 
+// this is used to filter contacts
 const Filter = (props) => {
     return <input value={props.filter} onChange={props.handleFilterChange} />;
 };
 
+// this handles the person form
 const Personform = (props) => {
     return (
         <form onSubmit={props.addName}>
@@ -29,15 +32,25 @@ const Personform = (props) => {
     );
 };
 
+// this renders all the persons in the phonebook
 const Persons = (props) => {
     const personsToShow = props.persons;
     return (
         <div>
             <h2>Numbers</h2>
             {personsToShow.map((person) => (
-                <p key={person.name}>
-                    {person.name} {person.number}
-                </p>
+                <div key={person.name}>
+                    <p>
+                        {person.name} {person.number}{" "}
+                        <button
+                            onClick={() =>
+                                props.deletenote(person.id, person.name)
+                            }
+                        >
+                            delete
+                        </button>
+                    </p>
+                </div>
             ))}
         </div>
     );
@@ -49,6 +62,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState("");
     const [filter, setFilter] = useState("");
 
+    // this renders all the persons
     useEffect(() => {
         noteService.getAll().then((initialPersons) => {
             setPersons(initialPersons);
@@ -90,6 +104,18 @@ const App = () => {
         person.name.toLowerCase().includes(filter.toLowerCase())
     );
 
+    const deletenote = (id, name) => {
+        if (window.confirm("Delete " + name + " ?")) {
+            noteService.http_delete(id).then((returnedPersons) => {
+                console.log("deleted", returnedPersons.name);
+
+                noteService.getAll().then((initialPersons) => {
+                    setPersons(initialPersons);
+                });
+            });
+        }
+    };
+
     return (
         <div>
             <h2>Phonebook</h2>
@@ -108,7 +134,7 @@ const App = () => {
                 newNumber={newNumber}
                 handleNumberChange={handleNumberChange}
             />
-            <Persons persons={personsToShow} />
+            <Persons persons={personsToShow} deletenote={deletenote} />
         </div>
     );
 };
