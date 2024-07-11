@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import noteService from "./services/notes";
-import notes from "./services/notes";
+import phonebookService from "./services/notes";
+import "./index.css";
 
 // this is used to filter contacts
 const Filter = (props) => {
@@ -56,15 +56,24 @@ const Persons = (props) => {
     );
 };
 
+const Notification = ({ message }) => {
+    if (message === null) {
+        return null;
+    }
+
+    return <div className="error">{message}</div>;
+};
+
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [filter, setFilter] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
 
     // this renders all the persons
     useEffect(() => {
-        noteService.getAll().then((initialPersons) => {
+        phonebookService.getAll().then((initialPersons) => {
             setPersons(initialPersons);
         });
     }, []);
@@ -84,8 +93,7 @@ const App = () => {
                     (person) => person.name === newName
                 );
                 const changedPerson = { ...found_person, number: newNumber };
-                noteService
-                
+                phonebookService
                     .update(found_person.id, changedPerson)
                     .then((updatedPerson) => {
                         setPersons(
@@ -95,6 +103,13 @@ const App = () => {
                                     : updatedPerson
                             )
                         );
+
+                        setErrorMessage(
+                            "Modified " + changedPerson.name + " successfully"
+                        );
+                        setTimeout(() => {
+                            setErrorMessage(null);
+                        }, 3000);
                     });
 
                 setNewNumber("");
@@ -105,10 +120,17 @@ const App = () => {
                 number: newNumber,
             };
 
-            noteService.create(personObject).then((returnedPerson) => {
+            phonebookService.create(personObject).then((returnedPerson) => {
                 setPersons(persons.concat(returnedPerson));
                 setNewName("");
                 setNewNumber("");
+
+                setErrorMessage(
+                    "Added " + returnedPerson.name + " successfully"
+                );
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 3000);
             });
         }
     };
@@ -131,10 +153,16 @@ const App = () => {
 
     const deletenote = (id, name) => {
         if (window.confirm("Delete " + name + " ?")) {
-            noteService.http_delete(id).then((returnedPersons) => {
+            phonebookService.http_delete(id).then((returnedPersons) => {
                 console.log("deleted", returnedPersons.name);
+                setErrorMessage(
+                    "Deleted " + returnedPersons.name + " successfully"
+                );
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 3000);
 
-                noteService.getAll().then((initialPersons) => {
+                phonebookService.getAll().then((initialPersons) => {
                     setPersons(initialPersons);
                 });
             });
@@ -144,6 +172,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={errorMessage} />
             Filter:
             <Filter
                 persons={persons}
