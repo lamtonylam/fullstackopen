@@ -69,11 +69,36 @@ const App = () => {
         });
     }, []);
 
+    // this is for handling adding a new person
     const addName = (event) => {
         event.preventDefault();
 
-        if (persons.some((person) => person.name == newName)) {
-            alert(`${newName} is already added to phonebook`);
+        if (persons.some((person) => person.name === newName)) {
+            if (
+                window.confirm(
+                    newName +
+                        " is already added to phonebook, replace the old number with a new one?"
+                )
+            ) {
+                const found_person = persons.find(
+                    (person) => person.name === newName
+                );
+                const changedPerson = { ...found_person, number: newNumber };
+                noteService
+                
+                    .update(found_person.id, changedPerson)
+                    .then((updatedPerson) => {
+                        setPersons(
+                            persons.map((person) =>
+                                person.id !== found_person.id
+                                    ? person
+                                    : updatedPerson
+                            )
+                        );
+                    });
+
+                setNewNumber("");
+            }
         } else {
             const personObject = {
                 name: newName,

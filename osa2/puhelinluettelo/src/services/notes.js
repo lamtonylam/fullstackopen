@@ -29,5 +29,5 @@ export default {
     getAll,
     create,
     update,
-    http_delete
+    http_delete,
 };
