@@ -56,19 +56,30 @@ const Persons = (props) => {
     );
 };
 
-const Notification = ({ message }) => {
+// this handles success banner
+const Success = ({ message }) => {
     if (message === null) {
         return null;
     }
 
-    return <div className="error">{message}</div>;
+    return <div className="success">{message}</div>;
 };
+
+// this handles error banner
+const ErrorMessage = ({message}) => {
+    if (message === null) {
+        return null
+    }
+
+    return <div className="error">{message}</div>
+}
 
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [filter, setFilter] = useState("");
+    const [successMessage, setSuccessMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
     // this renders all the persons
@@ -103,9 +114,18 @@ const App = () => {
                                     : updatedPerson
                             )
                         );
-
-                        setErrorMessage(
+                        setSuccessMessage(
                             "Modified " + changedPerson.name + " successfully"
+                        );
+                        setTimeout(() => {
+                            setSuccessMessage(null);
+                        }, 3000);
+                    })
+                    .catch((error) => {
+                        setErrorMessage(
+                            "Information of " +
+                                changedPerson.name +
+                                " has already been removed from server"
                         );
                         setTimeout(() => {
                             setErrorMessage(null);
@@ -125,11 +145,11 @@ const App = () => {
                 setNewName("");
                 setNewNumber("");
 
-                setErrorMessage(
+                setSuccessMessage(
                     "Added " + returnedPerson.name + " successfully"
                 );
                 setTimeout(() => {
-                    setErrorMessage(null);
+                    setSuccessMessage(null);
                 }, 3000);
             });
         }
@@ -154,12 +174,11 @@ const App = () => {
     const deletenote = (id, name) => {
         if (window.confirm("Delete " + name + " ?")) {
             phonebookService.http_delete(id).then((returnedPersons) => {
-                console.log("deleted", returnedPersons.name);
-                setErrorMessage(
+                setSuccessMessage(
                     "Deleted " + returnedPersons.name + " successfully"
                 );
                 setTimeout(() => {
-                    setErrorMessage(null);
+                    setSuccessMessage(null);
                 }, 3000);
 
                 phonebookService.getAll().then((initialPersons) => {
@@ -172,7 +191,8 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={errorMessage} />
+            <Success message={successMessage} />
+            <ErrorMessage message={errorMessage} />
             Filter:
             <Filter
                 persons={persons}
