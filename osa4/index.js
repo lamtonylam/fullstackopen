@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-require("dotenv").config();
+const config = require("./utils/config");
 
 const blogSchema = mongoose.Schema({
     title: String,
@@ -13,8 +13,7 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model("Blog", blogSchema);
 
-const password = process.env.password;
-const mongoUrl = `mongodb+srv://tonylam:${password}@cluster.6hp2tkl.mongodb.net/osa4?retryWrites=true&w=majority`;
+const mongoUrl = `mongodb+srv://tonylam:${config.password}@cluster.6hp2tkl.mongodb.net/osa4?retryWrites=true&w=majority`;
 mongoose.connect(mongoUrl);
 
 app.use(cors());
@@ -34,7 +33,7 @@ app.post("/api/blogs", (request, response) => {
     });
 });
 
-const PORT = 3003;
+const PORT = config.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
