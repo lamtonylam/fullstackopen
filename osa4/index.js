@@ -2,16 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const config = require("./utils/config");
-
-const blogSchema = mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
-    likes: Number,
-});
-
-const Blog = mongoose.model("Blog", blogSchema);
+const Blog = require("./models/blog");
 
 const mongoUrl = `mongodb+srv://tonylam:${config.password}@cluster.6hp2tkl.mongodb.net/osa4?retryWrites=true&w=majority`;
 mongoose.connect(mongoUrl);
