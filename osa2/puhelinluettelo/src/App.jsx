@@ -66,13 +66,13 @@ const Success = ({ message }) => {
 };
 
 // this handles error banner
-const ErrorMessage = ({message}) => {
+const ErrorMessage = ({ message }) => {
     if (message === null) {
-        return null
+        return null;
     }
 
-    return <div className="error">{message}</div>
-}
+    return <div className="error">{message}</div>;
+};
 
 const App = () => {
     const [persons, setPersons] = useState([]);
@@ -140,18 +140,34 @@ const App = () => {
                 number: newNumber,
             };
 
-            phonebookService.create(personObject).then((returnedPerson) => {
-                setPersons(persons.concat(returnedPerson));
-                setNewName("");
-                setNewNumber("");
+            phonebookService
+                .create(personObject)
+                .then((returnedPerson) => {
+                    setPersons(persons.concat(returnedPerson));
+                    setNewName("");
+                    setNewNumber("");
 
-                setSuccessMessage(
-                    "Added " + returnedPerson.name + " successfully"
-                );
-                setTimeout(() => {
-                    setSuccessMessage(null);
-                }, 3000);
-            });
+                    setSuccessMessage(
+                        "Added " + returnedPerson.name + " successfully"
+                    );
+                    setTimeout(() => {
+                        setSuccessMessage(null);
+                    }, 3000);
+                })
+                .catch((error) => {
+                    if (
+                        error.response &&
+                        error.response.data &&
+                        error.response.data.error
+                    ) {
+                        setErrorMessage(error.response.data.error);
+                    } else {
+                        setErrorMessage("An unexpected error occurred.");
+                    }
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 3000);
+                });
         }
     };
 
