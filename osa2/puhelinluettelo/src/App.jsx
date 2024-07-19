@@ -122,11 +122,24 @@ const App = () => {
                         }, 3000);
                     })
                     .catch((error) => {
-                        setErrorMessage(
-                            "Information of " +
-                                changedPerson.name +
-                                " has already been removed from server"
-                        );
+                        if (
+                            error.response &&
+                            error.response.data &&
+                            error.response.data.error
+                        ) {
+                            setErrorMessage(error.response.data.error);
+                        } else if (
+                            error.response &&
+                            error.response.status === 404
+                        ) {
+                            setErrorMessage(
+                                "Information of " +
+                                    changedPerson.name +
+                                    " has already been removed from server"
+                            );
+                        } else {
+                            setErrorMessage("An unexpected error occurred.");
+                        }
                         setTimeout(() => {
                             setErrorMessage(null);
                         }, 3000);
