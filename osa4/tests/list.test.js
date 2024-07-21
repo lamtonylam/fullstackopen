@@ -1,7 +1,12 @@
 const { test, describe } = require("node:test");
 const assert = require("node:assert");
 
-const { dummy, totalLikes, favoriteBlog } = require("../utils/list_helper");
+const {
+    dummy,
+    totalLikes,
+    favoriteBlog,
+    mostBlogs,
+} = require("../utils/list_helper");
 
 const multiple_blogs = [
     {
@@ -10,6 +15,14 @@ const multiple_blogs = [
         author: "Michael Chan",
         url: "https://reactpatterns.com/",
         likes: 7,
+        __v: 0,
+    },
+    {
+        _id: "5a422aa71b54a676234d17f8",
+        title: "Go To Statement Considered Harmful",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+        likes: 5,
         __v: 0,
     },
     {
@@ -47,7 +60,7 @@ describe("total likes", () => {
         assert.strictEqual(totalLikes(one_blog), 7);
     });
     test("of a bigger list is calculated right", () => {
-        assert.strictEqual(totalLikes(multiple_blogs), 12);
+        assert.strictEqual(totalLikes(multiple_blogs), 17);
     });
 });
 
@@ -55,5 +68,13 @@ describe("favoriteBlog", () => {
     test("of two blogs, which one is more liked", () => {
         const result = favoriteBlog(multiple_blogs);
         assert.strictEqual(result, multiple_blogs[0]);
+    });
+});
+
+describe("mostBlogs", () => {
+    test("who has most blogs", () => {
+        const result = mostBlogs(multiple_blogs);
+
+        assert.strictEqual(result.author, "Edsger W. Dijkstra");
     });
 });
