@@ -44,10 +44,20 @@ test("blogs are returned as json", async () => {
         .expect("Content-Type", /application\/json/);
 });
 
-test.only("there are two blogs", async () => {
+test("there are two blogs", async () => {
     const response = await api.get("/api/blogs");
 
     assert.strictEqual(response.body.length, 2);
+});
+
+test("the blog id's are in correct form", async () => {
+    const response = await api.get("/api/blogs");
+    // get all the keys in the first blog dict
+    const response_key = Object.keys(response.body[0]);
+    // get the last key in dict, which should be id
+    const last_key = response_key.slice(-1)[0];
+
+    assert.strictEqual(last_key, "id");
 });
 
 after(async () => {
