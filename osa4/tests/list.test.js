@@ -6,6 +6,7 @@ const {
     totalLikes,
     favoriteBlog,
     mostBlogs,
+    mostLikes,
 } = require("../utils/list_helper");
 
 const multiple_blogs = [
@@ -76,5 +77,15 @@ describe("mostBlogs", () => {
         const result = mostBlogs(multiple_blogs);
 
         assert.strictEqual(result.author, "Edsger W. Dijkstra");
+        assert.strictEqual(result.blogs, 3);
+    });
+});
+
+describe.only("mostLikes", () => {
+    test.only("who has most likes", () => {
+        const result = mostLikes(multiple_blogs);
+
+        assert.strictEqual(result.author, "Edsger W. Dijkstra");
+        assert.strictEqual(result.likes, 10);
     });
 });
