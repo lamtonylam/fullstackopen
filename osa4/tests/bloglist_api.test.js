@@ -68,7 +68,7 @@ describe.only("posting blog", () => {
         assert(titles.includes("Badabim badabum"));
     });
 
-    test.only("posting blog without likes", async () => {
+    test("without likes", async () => {
         const newBlog = {
             title: "Badabim badabum",
             author: "Edsger W. Dijkstra",
@@ -93,6 +93,21 @@ describe.only("posting blog", () => {
 
         // asserting the third blog likes should be 0
         assert(like === 0);
+    });
+
+    test.only("without title or url result in 400 status code", async () => {
+        const newBlog = {
+            title: "Badabim badabum",
+            author: "Edsger W. Dijkstra",
+            likes: 50,
+        };
+
+        await api.post("/api/blogs").send(newBlog).expect(400);
+
+        const response = await api.get("/api/blogs");
+
+        // asserting that adding did not succeed
+        assert.strictEqual(response._body.length, helper.initial_blogs.length);
     });
 });
 
