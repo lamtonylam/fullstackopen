@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require("node:test");
+const { test, describe, after, beforeEach } = require("node:test");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
@@ -42,26 +42,58 @@ test("the blog id's are in correct form", async () => {
     assert.strictEqual(last_key, "id");
 });
 
-test.only("posting blog", async () => {
-    const newBlog = {
-        title: "Badabim badabum",
-        author: "Edsger W. Dijkstra",
-        url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-        likes: 5,
-    };
+describe.only("posting blog", () => {
+    test("posting blog normally", async () => {
+        const newBlog = {
+            title: "Badabim badabum",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+            likes: 5,
+        };
 
-    await api
-        .post("/api/blogs")
-        .send(newBlog)
-        .expect(201)
-        .expect("Content-Type", /application\/json/);
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .expect(201)
+            .expect("Content-Type", /application\/json/);
 
-    const response = await api.get("/api/blogs");
+        const response = await api.get("/api/blogs");
 
-    const titles = response._body.map((r) => r.title);
+        const titles = response._body.map((r) => r.title);
 
-    assert.strictEqual(response.body.length, helper.initial_blogs.length + 1);
-    assert(titles.includes("Badabim badabum"));
+        assert.strictEqual(
+            response.body.length,
+            helper.initial_blogs.length + 1
+        );
+        assert(titles.includes("Badabim badabum"));
+    });
+
+    test.only("posting blog without likes", async () => {
+        const newBlog = {
+            title: "Badabim badabum",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+        };
+
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .expect(201)
+            .expect("Content-Type", /application\/json/);
+
+        const response = await api.get("/api/blogs");
+
+        // likes amount from the badabim badabum blog
+        const like = response._body[2].likes;
+
+        assert.strictEqual(
+            response.body.length,
+            helper.initial_blogs.length + 1
+        );
+
+        // asserting the third blog likes should be 0
+        assert(like === 0);
+    });
 });
 
 after(async () => {
