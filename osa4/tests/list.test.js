@@ -81,8 +81,8 @@ describe("mostBlogs", () => {
     });
 });
 
-describe.only("mostLikes", () => {
-    test.only("who has most likes", () => {
+describe("mostLikes", () => {
+    test("who has most likes", () => {
         const result = mostLikes(multiple_blogs);
 
         assert.strictEqual(result.author, "Edsger W. Dijkstra");
