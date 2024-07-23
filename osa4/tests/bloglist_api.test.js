@@ -140,7 +140,7 @@ describe("posting blog", () => {
     });
 });
 
-describe("deleteion of a note", () => {
+describe("deleteion of a blog", () => {
     test("succeeds with status code 204 if id is valid", async () => {
         // getting the id of first blog item to delete
         var blogs_at_first = await api.get("/api/blogs");
