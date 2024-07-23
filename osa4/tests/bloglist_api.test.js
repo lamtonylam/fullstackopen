@@ -195,7 +195,7 @@ describe("when there is initially one user at db", () => {
         assert(usernames.includes(newUser.username));
     });
 
-    test("creation fails with proper statuscode and message if username already taken", async () => {
+    test("creation fails if username already taken", async () => {
         const usersAtStart = await helper.usersInDb();
 
         const newUser = {
@@ -213,6 +213,50 @@ describe("when there is initially one user at db", () => {
         const usersAtEnd = await helper.usersInDb();
         assert(result.body.error.includes("expected `username` to be unique"));
 
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
+
+    test("creation fails when no password is provided", async () => {
+        const usersAtStart = await helper.usersInDb();
+
+        const newUser = {
+            username: "bububuububu",
+            name: "Superuser",
+            password: "",
+        };
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            // checking that response code is 400, error.
+            .expect(400)
+            .expect("Content-Type", /application\/json/);
+
+        const usersAtEnd = await helper.usersInDb();
+
+        // checking that no new user was created
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    });
+
+    test("creation fails when no password is too short", async () => {
+        const usersAtStart = await helper.usersInDb();
+
+        const newUser = {
+            username: "jabababbab",
+            name: "Superuser",
+            password: "aa",
+        };
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            // checking that response code is 400, error.
+            .expect(400)
+            .expect("Content-Type", /application\/json/);
+
+        const usersAtEnd = await helper.usersInDb();
+
+        // checking that no new user was created
         assert.strictEqual(usersAtEnd.length, usersAtStart.length);
     });
 });
