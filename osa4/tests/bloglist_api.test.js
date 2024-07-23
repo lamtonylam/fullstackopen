@@ -19,7 +19,7 @@ beforeEach(async () => {
     await blogObject.save();
 });
 
-describe("when there is initially two blogs saved", () => {
+describe.only("when there is initially two blogs saved", () => {
     test("blogs are returned as json", async () => {
         await api
             .get("/api/blogs/")
@@ -41,6 +41,31 @@ describe("when there is initially two blogs saved", () => {
         const last_key = response_key.slice(-1)[0];
 
         assert.strictEqual(last_key, "id");
+    });
+
+    test.only("modifying blog returns 200", async () => {
+        // getting the id of first blog item to modify
+        var blogs_at_first = await api.get("/api/blogs");
+        var blogs_at_first = blogs_at_first._body;
+        var blog_to_delete_id = blogs_at_first[0].id;
+
+        const modified_blog = {
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 10,
+        };
+
+        var response = await api
+            .put(`/api/blogs/${blog_to_delete_id}`)
+            .send(modified_blog)
+            // expect 200 code if succesful
+            .expect(200)
+            .expect("Content-Type", /application\/json/);
+
+        var response = response._body;
+        // checking if response blog has 10 likes, just like updated
+        assert.strictEqual(response.likes, 10);
     });
 });
 
@@ -97,7 +122,7 @@ describe("posting blog", () => {
         assert(like === 0);
     });
 
-    test.only("without title or url result in 400 status code", async () => {
+    test("without title or url result in 400 status code", async () => {
         const newBlog = {
             title: "Badabim badabum",
             author: "Edsger W. Dijkstra",
@@ -113,8 +138,8 @@ describe("posting blog", () => {
     });
 });
 
-describe.only("deleteion of a note", () => {
-    test.only("succeeds with status code 204 if id is valid", async () => {
+describe("deleteion of a note", () => {
+    test("succeeds with status code 204 if id is valid", async () => {
         // getting the id of first blog item to delete
         var blogs_at_first = await api.get("/api/blogs");
         var blogs_at_first = blogs_at_first._body;
