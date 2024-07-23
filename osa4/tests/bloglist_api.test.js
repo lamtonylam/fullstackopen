@@ -19,30 +19,32 @@ beforeEach(async () => {
     await blogObject.save();
 });
 
-test("blogs are returned as json", async () => {
-    await api
-        .get("/api/blogs/")
-        .expect(200)
-        .expect("Content-Type", /application\/json/);
+describe("when there is initially two blogs saved", () => {
+    test("blogs are returned as json", async () => {
+        await api
+            .get("/api/blogs/")
+            .expect(200)
+            .expect("Content-Type", /application\/json/);
+    });
+
+    test("there are two blogs", async () => {
+        const response = await api.get("/api/blogs");
+
+        assert.strictEqual(response.body.length, 2);
+    });
+
+    test("the blog id's are in correct form", async () => {
+        const response = await api.get("/api/blogs");
+        // get all the keys in the first blog dict
+        const response_key = Object.keys(response.body[0]);
+        // get the last key in dict, which should be id
+        const last_key = response_key.slice(-1)[0];
+
+        assert.strictEqual(last_key, "id");
+    });
 });
 
-test("there are two blogs", async () => {
-    const response = await api.get("/api/blogs");
-
-    assert.strictEqual(response.body.length, 2);
-});
-
-test("the blog id's are in correct form", async () => {
-    const response = await api.get("/api/blogs");
-    // get all the keys in the first blog dict
-    const response_key = Object.keys(response.body[0]);
-    // get the last key in dict, which should be id
-    const last_key = response_key.slice(-1)[0];
-
-    assert.strictEqual(last_key, "id");
-});
-
-describe.only("posting blog", () => {
+describe("posting blog", () => {
     test("posting blog normally", async () => {
         const newBlog = {
             title: "Badabim badabum",
@@ -108,6 +110,29 @@ describe.only("posting blog", () => {
 
         // asserting that adding did not succeed
         assert.strictEqual(response._body.length, helper.initial_blogs.length);
+    });
+});
+
+describe.only("deleteion of a note", () => {
+    test.only("succeeds with status code 204 if id is valid", async () => {
+        // getting the id of first blog item to delete
+        var blogs_at_first = await api.get("/api/blogs");
+        var blogs_at_first = blogs_at_first._body;
+        var blog_to_delete_id = blogs_at_first[0].id;
+
+        const response = await api.delete(`/api/blogs/${blog_to_delete_id}`);
+        const status_code = response.statusCode;
+
+        // check that deletion response code is really 204
+        assert.strictEqual(status_code, 204);
+
+        const blogs_at_end = await api.get("/api/blogs");
+
+        // check that blogs at the end length is one blog shorter
+        assert.strictEqual(
+            blogs_at_end._body.length,
+            helper.initial_blogs.length - 1
+        );
     });
 });
 
