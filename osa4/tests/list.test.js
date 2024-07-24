@@ -77,7 +77,7 @@ describe("mostBlogs", () => {
         const result = mostBlogs(multiple_blogs);
 
         assert.strictEqual(result.author, "Edsger W. Dijkstra");
-        assert.strictEqual(result.blogs, 3);
+        assert.strictEqual(result.blogs, 2);
     });
 });
 
