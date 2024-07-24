@@ -2,6 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const helper = require("../tests/test_helper");
+const jwt = require("jsonwebtoken");
 require("express-async-errors");
 
 blogsRouter.get("/", async (request, response) => {
@@ -15,14 +16,14 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
     const body = request.body;
 
-    var first_user_in_db = await helper.usersInDb();
-    var first_user_in_db = first_user_in_db[0].id;
+    // get user token and verify it
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: "token invalid" });
+    }
 
-    const user = await User.findById(first_user_in_db);
-
-    // temporarily disable this for further tasks
-    // 4.17: blogilistan laajennus, step5
-    // const user = await User.findById(body.userId);
+    // find the user that is logged in
+    const user = await User.findById(decodedToken.id);
 
     if (!body.title || !body.url) {
         return response.status(400).json({ error: "Title or URL is missing" });
