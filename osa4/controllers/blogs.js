@@ -22,7 +22,7 @@ blogsRouter.post("/", async (request, response) => {
         return response.status(401).json({ error: "token invalid" });
     }
 
-    // find the user that is logged in
+    // find the user that is logged
     const user = await User.findById(decodedToken.id);
 
     if (!body.title || !body.url) {
@@ -44,9 +44,27 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
-    const id = request.params.id;
+    const blog_id = request.params.id;
 
-    await Blog.findByIdAndDelete(id);
+    // get user token and verify it
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: "token invalid" });
+    }
+
+    // find the user that is logged in
+    const user = await User.findById(decodedToken.id);
+    const user_id = user._id.toString();
+
+    const blog = await Blog.findById(blog_id);
+
+    if (blog.user.toString() === user_id) {
+        await Blog.findByIdAndDelete(blog_id);
+    } else {
+        return response.status(401).json({
+            error: "forbidden, you are not the blog creator",
+        });
+    }
     response.status(204).end();
 });
 
