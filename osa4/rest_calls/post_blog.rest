@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbXBwYSIsImlkIjoiNjZhMTMxZDg3OWE4NjY0ZDJjNDg3OGYwIiwiaWF0IjoxNzIxODUzNzc1fQ.2fksXzWqOQTAPF443rV-56diGsmSfZg552H2P-pZT4w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbXBwYSIsImlkIjoiNjZhMTMxZDg3OWE4NjY0ZDJjNDg3OGYwIiwiaWF0IjoxNzIxOTk1ODY3fQ.C3NlwRo7EZxoAq-QYZWixuzrPJmAjdjJyt8Q7BHYRI4
 
 {
-    "title" : "Harry Botter",
+    "title" : "26.7, 14:12",
     "author" : "JK Botting",
     "url" : "google.com",
     "likes" : 50,
