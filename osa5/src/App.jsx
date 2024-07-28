@@ -5,6 +5,7 @@ import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
+// login form component
 const Login = ({
   handleLogin,
   username,
@@ -40,13 +41,60 @@ const Login = ({
   );
 };
 
+// bloglist component
 const BlogList = ({ user, blogs }) => (
   <div>
     <h2>blogs</h2>
     <p>{user.name} logged in</p>
+
     {blogs.map(blog => (
       <Blog key={blog.id} blog={blog} />
     ))}
+  </div>
+);
+
+// blog creation component
+const CreateBlog = ({
+  handeBlogPost,
+  title,
+  author,
+  url,
+  setTitle,
+  setUrl,
+  setAuthor,
+}) => (
+  <div>
+    <h2>create new</h2>
+    <form onSubmit={handeBlogPost}>
+      <div>
+        title
+        <input
+          type='text'
+          value={title}
+          name='title'
+          onChange={({ target }) => setTitle(target.value)}
+        />
+      </div>
+      <div>
+        author
+        <input
+          type='text'
+          value={author}
+          name='author'
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+      </div>
+      <div>
+        url
+        <input
+          type='text'
+          value={url}
+          name='url'
+          onChange={({ target }) => setUrl(target.value)}
+        />
+      </div>
+      <button type='submit'>create</button>
+    </form>
   </div>
 );
 
@@ -56,6 +104,11 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
+  // blog creation form states
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setUrl] = useState('');
+
   const handleLogin = async event => {
     event.preventDefault();
 
@@ -64,6 +117,7 @@ const App = () => {
         username,
         password,
       });
+      blogService.setToken(user.token);
       setUser(user);
       setUsername('');
       setPassword('');
@@ -74,6 +128,28 @@ const App = () => {
       //     setErrorMessage(null);
       // }, 5000);
       console.log('wrong credentials');
+    }
+  };
+
+  const handeBlogPost = async event => {
+    event.preventDefault();
+
+    const blog = {
+      title: title,
+      author: author,
+      url: url,
+      user: user,
+    };
+
+    try {
+      const post_blog = await blogService.create(blog);
+      setTitle('');
+      setUrl('');
+      setAuthor('');
+      const blogPostResult = post_blog;
+      setBlogs(blogs.concat(blogPostResult));
+    } catch (error) {
+      console.error('Error creating blog:', error);
     }
   };
 
@@ -96,7 +172,20 @@ const App = () => {
     );
   }
 
-  return <BlogList user={user} blogs={blogs} />;
+  return (
+    <div>
+      <CreateBlog
+        handeBlogPost={handeBlogPost}
+        title={title}
+        author={author}
+        url={url}
+        setTitle={setTitle}
+        setAuthor={setAuthor}
+        setUrl={setUrl}
+      />
+      <BlogList user={user} blogs={blogs} />
+    </div>
+  );
 };
 
 export default App;
