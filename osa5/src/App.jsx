@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
+
+// components
 import Blog from './components/Blog';
+import ErrorNotification from './components/error';
+import SuccessNotification from './components/success';
 
 // services
 import blogService from './services/blogs';
@@ -113,6 +117,10 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
+  // notification
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
   // blog creation form states
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -134,12 +142,17 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
-      console.log('logging in with', username, password);
+
+      setSuccessMessage(`logged in succesfully ${username}`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (error) {
-      // setErrorMessage("wrong crendials");
-      // setTimeout(() => {
-      //     setErrorMessage(null);
-      // }, 5000);
+      setErrorMessage('wrong crendials');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+
       console.log(error);
     }
   };
@@ -161,7 +174,19 @@ const App = () => {
       setAuthor('');
       const blogPostResult = post_blog;
       setBlogs(blogs.concat(blogPostResult));
+
+      setSuccessMessage(
+        `succesfully added blog ${blogPostResult.title} from author ${blogPostResult.author}`
+      );
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (error) {
+      setErrorMessage('error creating blog', error);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
+
       console.error('Error creating blog:', error);
     }
   };
@@ -180,33 +205,47 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
+
+      setSuccessMessage(
+        'succesfully logged in using saved credentials',
+        username
+      );
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     }
   }, []);
 
-  if (user === null) {
-    return (
-      <Login
-        handleLogin={handleLogin}
-        username={username}
-        password={password}
-        setPassword={setPassword}
-        setUsername={setUsername}
-      />
-    );
-  }
-
   return (
     <div>
-      <CreateBlog
-        handeBlogPost={handeBlogPost}
-        title={title}
-        author={author}
-        url={url}
-        setTitle={setTitle}
-        setAuthor={setAuthor}
-        setUrl={setUrl}
-      />
-      <BlogList user={user} blogs={blogs} />
+      <ErrorNotification message={errorMessage} />
+      <SuccessNotification message={successMessage} />
+
+      {user === null ? (
+        <div>
+          <Login
+            handleLogin={handleLogin}
+            username={username}
+            password={password}
+            setPassword={setPassword}
+            setUsername={setUsername}
+          />
+        </div>
+      ) : (
+        <div>
+          {' '}
+          <CreateBlog
+            handeBlogPost={handeBlogPost}
+            title={title}
+            author={author}
+            url={url}
+            setTitle={setTitle}
+            setAuthor={setAuthor}
+            setUrl={setUrl}
+          />
+          <BlogList user={user} blogs={blogs} />{' '}
+        </div>
+      )}
     </div>
   );
 };
