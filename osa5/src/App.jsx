@@ -4,112 +4,13 @@ import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import ErrorNotification from './components/error';
 import SuccessNotification from './components/success';
+import Login from './components/login';
+import BlogList from './components/Bloglist';
+import CreateBlog from './components/Create_blog';
 
 // services
 import blogService from './services/blogs';
 import loginService from './services/login';
-
-// login form component
-const Login = ({
-  handleLogin,
-  username,
-  password,
-  setUsername,
-  setPassword,
-}) => {
-  return (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            type='text'
-            value={username}
-            name='Username'
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type='password'
-            value={password}
-            name='Password'
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type='submit'>login</button>
-      </form>
-    </div>
-  );
-};
-
-// bloglist component
-const BlogList = ({ user, blogs }) => (
-  <div>
-    <h2>blogs</h2>
-    <p>{user.name} logged in</p>
-
-    <button
-      onClick={() => {
-        window.localStorage.clear();
-        window.location.reload();
-      }}
-    >
-      Logout
-    </button>
-
-    {blogs.map(blog => (
-      <Blog key={blog.id} blog={blog} />
-    ))}
-  </div>
-);
-
-// blog creation component
-const CreateBlog = ({
-  handeBlogPost,
-  title,
-  author,
-  url,
-  setTitle,
-  setUrl,
-  setAuthor,
-}) => (
-  <div>
-    <h2>create new</h2>
-    <form onSubmit={handeBlogPost}>
-      <div>
-        title
-        <input
-          type='text'
-          value={title}
-          name='title'
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author
-        <input
-          type='text'
-          value={author}
-          name='author'
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url
-        <input
-          type='text'
-          value={url}
-          name='url'
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type='submit'>create</button>
-    </form>
-  </div>
-);
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
