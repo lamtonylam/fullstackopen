@@ -47,6 +47,15 @@ const BlogList = ({ user, blogs }) => (
     <h2>blogs</h2>
     <p>{user.name} logged in</p>
 
+    <button
+      onClick={() => {
+        window.localStorage.clear();
+        window.location.reload();
+      }}
+    >
+      Logout
+    </button>
+
     {blogs.map(blog => (
       <Blog key={blog.id} blog={blog} />
     ))}
@@ -117,17 +126,21 @@ const App = () => {
         username,
         password,
       });
+
+      // set logged in user to local storage
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+
       blogService.setToken(user.token);
       setUser(user);
       setUsername('');
       setPassword('');
       console.log('logging in with', username, password);
-    } catch {
+    } catch (error) {
       // setErrorMessage("wrong crendials");
       // setTimeout(() => {
       //     setErrorMessage(null);
       // }, 5000);
-      console.log('wrong credentials');
+      console.log(error);
     }
   };
 
@@ -159,6 +172,16 @@ const App = () => {
       blogService.getAll().then(blogs => setBlogs(blogs));
     }
   }, [user]);
+
+  // check if user is saved in local storage
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
+  }, []);
 
   if (user === null) {
     return (
