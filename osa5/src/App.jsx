@@ -7,6 +7,7 @@ import SuccessNotification from './components/success';
 import Login from './components/login';
 import BlogList from './components/Bloglist';
 import CreateBlog from './components/Create_blog';
+import Togglable from './components/Toggable';
 
 // services
 import blogService from './services/blogs';
@@ -134,16 +135,28 @@ const App = () => {
         </div>
       ) : (
         <div>
-          {' '}
-          <CreateBlog
-            handeBlogPost={handeBlogPost}
-            title={title}
-            author={author}
-            url={url}
-            setTitle={setTitle}
-            setAuthor={setAuthor}
-            setUrl={setUrl}
-          />
+          <h2>blogs</h2>
+          {user.name} logged in
+          <button
+            onClick={() => {
+              window.localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>{' '}
+
+          <Togglable buttonLabel='new blog'>
+            <CreateBlog
+              handeBlogPost={handeBlogPost}
+              title={title}
+              author={author}
+              url={url}
+              setTitle={setTitle}
+              setAuthor={setAuthor}
+              setUrl={setUrl}
+            />
+          </Togglable>
           <BlogList user={user} blogs={blogs} />{' '}
         </div>
       )}

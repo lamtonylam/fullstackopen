@@ -43,4 +43,4 @@ const CreateBlog = ({
   </div>
 );
 
-export default CreateBlog
+export default CreateBlog;
