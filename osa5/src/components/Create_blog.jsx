@@ -18,7 +18,7 @@ const CreateBlog = ({ CreateBlog, user }) => {
       user: user,
     };
 
-    CreateBlog(newBlog); // Call the CreateBlog function passed as a prop
+    CreateBlog(newBlog);
 
     setTitle('');
     setAuthor('');
