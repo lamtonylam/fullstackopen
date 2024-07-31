@@ -23,10 +23,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // blog creation form states
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
 
   const handleLogin = async event => {
     event.preventDefault();
@@ -54,41 +50,14 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
-
-      console.log(error);
     }
   };
 
-  const handeBlogPost = async event => {
-    event.preventDefault();
-
-    const blog = {
-      title: title,
-      author: author,
-      url: url,
-      user: user,
-    };
-
+  const addBlog = async blogObject => {
     try {
-      const post_blog = await blogService.create(blog);
-      setTitle('');
-      setUrl('');
-      setAuthor('');
-      const blogPostResult = post_blog;
-      setBlogs(blogs.concat(blogPostResult));
-
-      setSuccessMessage(
-        `succesfully added blog ${blogPostResult.title} from author ${blogPostResult.author}`
-      );
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 3000);
+      const returnedBlog = await blogService.create(blogObject);
+      setBlogs(blogs.concat(returnedBlog));
     } catch (error) {
-      setErrorMessage('error creating blog', error);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 3000);
-
       console.error('Error creating blog:', error);
     }
   };
@@ -145,17 +114,8 @@ const App = () => {
           >
             Logout
           </button>{' '}
-
           <Togglable buttonLabel='new blog'>
-            <CreateBlog
-              handeBlogPost={handeBlogPost}
-              title={title}
-              author={author}
-              url={url}
-              setTitle={setTitle}
-              setAuthor={setAuthor}
-              setUrl={setUrl}
-            />
+            <CreateBlog CreateBlog={addBlog} user={user} />
           </Togglable>
           <BlogList user={user} blogs={blogs} />{' '}
         </div>
