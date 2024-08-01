@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import blogService from '../services/blogs';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, user }) => {
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
@@ -35,6 +35,13 @@ const Blog = ({ blog }) => {
     blogService.put(blog_model, blog.id);
   };
 
+  const remove = () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      blogService.remove(blog.id);
+      window.location.reload();
+    }
+  };
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
@@ -49,6 +56,11 @@ const Blog = ({ blog }) => {
           <button onClick={like}>like</button>
         </p>
         <p>{blog.user.name}</p>
+        {user.username === blog.user.username ? (
+          <button onClick={remove}>remove</button>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );

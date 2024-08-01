@@ -60,7 +60,7 @@ const userExtractor = async (request, response, next) => {
         request.user = user;
         next();
     } catch (error) {
-        return response.status(401).json({ error: "token invalid" });
+        return response.status(401).json(error);
     }
 };
 
