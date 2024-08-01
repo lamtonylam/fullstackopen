@@ -1,14 +1,14 @@
-import Blog from './Blog';
-import CreateBlog from './Create_blog';
-import Togglable from './Toggable';
+import Blog from './Blog'
+import CreateBlog from './Create_blog'
+import Togglable from './Toggable'
 
 const BlogList = ({ user, blogs }) => {
   // sort by likes
   blogs.sort(function (a, b) {
-    return a.likes - b.likes;
-  });
+    return a.likes - b.likes
+  })
 
-  blogs.reverse();
+  blogs.reverse()
 
   return (
     <div>
@@ -16,7 +16,7 @@ const BlogList = ({ user, blogs }) => {
         <Blog key={blog.id} blog={blog} user={user}/>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default BlogList;
+export default BlogList

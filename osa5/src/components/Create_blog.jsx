@@ -1,29 +1,29 @@
 // blog creation component
 
-import { useState } from 'react';
+import { useState } from 'react'
 
 const CreateBlog = ({ CreateBlog, user }) => {
   // blog creation form states
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const addBlog = event => {
-    event.preventDefault();
+    event.preventDefault()
 
     const newBlog = {
       title: title,
       author: author,
       url: url,
       user: user,
-    };
+    }
 
-    CreateBlog(newBlog);
+    CreateBlog(newBlog)
 
-    setTitle('');
-    setAuthor('');
-    setUrl('');
-  };
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
 
   return (
     <div>
@@ -59,7 +59,7 @@ const CreateBlog = ({ CreateBlog, user }) => {
         <button type='submit'>create</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default CreateBlog;
+export default CreateBlog
