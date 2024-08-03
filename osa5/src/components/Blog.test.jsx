@@ -46,3 +46,28 @@ test('expanding with click shows details', async () => {
   // assert that they are there
   expect(url, likes, user_test).toBeDefined();
 });
+
+test('clicking like button twice', async () => {
+  const blog = {
+    user: {
+      name: 'Tony',
+    },
+    title: 'testi blogi',
+    author: 'Mikko Mallikas',
+    url: 'hs.fi',
+    likes: 40,
+  };
+
+  const mockHandler = vi.fn();
+
+  render(<Blog blog={blog} mockHandler={mockHandler} />);
+
+  const user = userEvent.setup();
+  const viewbutton = screen.getByText('view');
+  await user.click(viewbutton);
+  const likebutton = screen.getByText('like');
+  await user.click(likebutton);
+  await user.click(likebutton);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
+});

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import blogService from '../services/blogs';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, mockHandler }) => {
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
@@ -37,6 +37,16 @@ const Blog = ({ blog }) => {
     blogService.put(blog_model, blog.id);
   };
 
+  // handling likes for tests
+  // if mockhandler is null, use the real like function
+  const likehandler = () => {
+    if (mockHandler) {
+      mockHandler();
+    } else {
+      like();
+    }
+  };
+
   const remove = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       blogService.remove(blog.id);
@@ -55,7 +65,8 @@ const Blog = ({ blog }) => {
         <p>{blog.url}</p>
         <p>
           {likeAmount}
-          <button onClick={like}>like</button>
+          {/* likehandler because of tests */}
+          <button onClick={likehandler}>like</button>{' '}
         </p>
         <p>{blog.user.name}</p>
         {user && user.username === blog.user.username && (
