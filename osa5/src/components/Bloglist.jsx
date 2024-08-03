@@ -2,7 +2,7 @@ import Blog from './Blog'
 import CreateBlog from './Create_blog'
 import Togglable from './Toggable'
 
-const BlogList = ({ user, blogs }) => {
+const BlogList = ({blogs }) => {
   // sort by likes
   blogs.sort(function (a, b) {
     return a.likes - b.likes
@@ -13,7 +13,7 @@ const BlogList = ({ user, blogs }) => {
   return (
     <div>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} user={user}/>
+        <Blog key={blog.id} blog={blog}/>
       ))}
     </div>
   )
