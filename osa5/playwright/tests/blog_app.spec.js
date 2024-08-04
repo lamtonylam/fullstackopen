@@ -1,5 +1,6 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
 const { loginWith, createBlog } = require("./helper");
+const exp = require("constants");
 
 describe("Blog app", () => {
     // testien alustus
@@ -83,5 +84,17 @@ describe("When logged in", () => {
         await page.getByRole("button", { name: "like" }).click();
 
         await expect(page.getByText("1")).toBeVisible();
+    });
+
+    test("a blog can be deleted", async ({ page }) => {
+        await createBlog(page, "Meaning of life", "mikko mallikas", "hs.fi");
+        await page.getByRole("button", { name: "view" }).click();
+
+        page.on("dialog", (dialog) => dialog.accept());
+        await page.getByRole("button", { name: "remove" }).click();
+
+        await expect(
+            page.getByText("Meaning of life mikko mallikas")
+        ).not.toBeVisible();
     });
 });
