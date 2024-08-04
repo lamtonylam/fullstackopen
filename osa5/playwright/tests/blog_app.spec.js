@@ -98,3 +98,48 @@ describe("When logged in", () => {
         ).not.toBeVisible();
     });
 });
+
+describe("When another person is logged in", () => {
+    // testien alustus
+    beforeEach(async ({ page, request }) => {
+        await request.post("/api/testing/reset");
+        await request.post("/api/users", {
+            data: {
+                name: "Matti Luukkainen",
+                username: "mluukkai",
+                password: "salainen",
+            },
+        });
+
+        await page.goto("/");
+
+        loginWith(page, "mluukkai", "salainen");
+
+        const succesfulLocator = await page.getByText(
+            "Matti Luukkainen logged in"
+        );
+        await expect(succesfulLocator).toBeVisible();
+    });
+
+    test("remove button only showed for blog creator", async ({
+        page,
+        request,
+    }) => {
+        await createBlog(page, "Meaning of life", "mikko mallikas", "hs.fi");
+
+        await page.getByRole("button", { name: "Logout" }).click();
+
+        await request.post("/api/users", {
+            data: {
+                name: "Peppi Pitkätossu",
+                username: "peppi",
+                password: "salainen",
+            },
+        });
+
+        loginWith(page, "peppi", "salainen");
+
+        await page.getByRole("button", { name: "view" }).click();
+        await expect(page.getByText("remove")).not.toBeVisible();
+    });
+});
