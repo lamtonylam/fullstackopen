@@ -16,6 +16,7 @@ const Login = ({
             value={username}
             name='Username'
             onChange={({ target }) => setUsername(target.value)}
+            data-testid='username'
           />
         </div>
         <div>
@@ -25,12 +26,13 @@ const Login = ({
             value={password}
             name='Password'
             onChange={({ target }) => setPassword(target.value)}
+            data-testid='password'
           />
         </div>
         <button type='submit'>login</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
