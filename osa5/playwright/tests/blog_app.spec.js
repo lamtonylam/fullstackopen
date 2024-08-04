@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
+const { loginWith } = require("./helper");
 
 describe("Blog app", () => {
     // testien alustus
@@ -26,10 +27,7 @@ describe("Blog app", () => {
 
     describe("Login", () => {
         test("succeeds with correct crendetials", async ({ page }) => {
-            await page.getByTestId("username").fill("mluukkai");
-            await page.getByTestId("password").fill("salainen");
-
-            await page.getByRole("button", { name: "login" }).click();
+            await loginWith(page, "mluukkai", "salainen");
 
             const succesfulLocator = await page.getByText(
                 "Matti Luukkainen logged in"
@@ -38,10 +36,7 @@ describe("Blog app", () => {
         });
 
         test("fails with wrong credentials", async ({ page }) => {
-            await page.getByTestId("username").fill("mluukkai");
-            await page.getByTestId("password").fill("mluukkai");
-
-            await page.getByRole("button", { name: "login" }).click();
+            await loginWith(page, "mluukkai", "bumbum");
 
             const incorrectCrendentialsLocator = await page.getByText(
                 "wrong crendials"
@@ -64,10 +59,7 @@ describe("When logged in", () => {
 
         await page.goto("http://localhost:5173");
 
-        await page.getByTestId("username").fill("mluukkai");
-        await page.getByTestId("password").fill("salainen");
-
-        await page.getByRole("button", { name: "login" }).click();
+        loginWith(page, "mluukkai", "salainen");
 
         const succesfulLocator = await page.getByText(
             "Matti Luukkainen logged in"
