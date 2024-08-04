@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-const { loginWith, createBlog } = require("./helper");
+const { loginWith, createBlog, createSecondBlog } = require("./helper");
 const exp = require("constants");
 
 describe("Blog app", () => {
@@ -96,6 +96,30 @@ describe("When logged in", () => {
         await expect(
             page.getByText("Meaning of life mikko mallikas")
         ).not.toBeVisible();
+    });
+
+    test("most liked blog is ordered correctly", async ({ page }) => {
+        // create no likes blog first
+        await createBlog(page, "Most liked", "mikko mallikas", "hs.fi");
+        await createSecondBlog(page, "No likes", "mikko mallikas", "hs.fi");
+
+        // get all buttons
+        const buttons = await page.getByRole("button").all();
+        // click the last button which is view button for the most liked blog
+        await buttons.slice(-1)[0].click();
+
+        // like the most liked blog
+        await page.getByRole("button", { name: "like" }).click();
+        await page.getByRole("button", { name: "like" }).click();
+
+        // reload page and wait for 1 second
+        await page.reload();
+        await page.waitForTimeout(1000);
+
+        const blogs = await page.getByTestId("blog").all();
+        const first_blog = await blogs[0].textContent();
+
+        expect(first_blog).toContain("Most liked");
     });
 });
 

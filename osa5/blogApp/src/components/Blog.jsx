@@ -55,7 +55,7 @@ const Blog = ({ blog, mockHandler }) => {
   };
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div style={blogStyle} className='blog' data-testid='blog'>
       {blog.title} {blog.author}
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>view</button>
