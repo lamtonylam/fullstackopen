@@ -75,4 +75,13 @@ describe("When logged in", () => {
             page.getByText("Meaning of life mikko mallikas")
         ).toBeVisible();
     });
+
+    test("a blog can be liked", async ({ page }) => {
+        await createBlog(page, "Meaning of life", "mikko mallikas", "hs.fi");
+
+        await page.getByRole("button", { name: "view" }).click();
+        await page.getByRole("button", { name: "like" }).click();
+
+        await expect(page.getByText("1")).toBeVisible();
+    });
 });
