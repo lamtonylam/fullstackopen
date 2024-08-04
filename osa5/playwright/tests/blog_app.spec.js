@@ -50,3 +50,42 @@ describe("Blog app", () => {
         });
     });
 });
+
+describe("When logged in", () => {
+    beforeEach(async ({ page, request }) => {
+        await request.post("http:localhost:3003/api/testing/reset");
+        await request.post("http://localhost:3003/api/users", {
+            data: {
+                name: "Matti Luukkainen",
+                username: "mluukkai",
+                password: "salainen",
+            },
+        });
+
+        await page.goto("http://localhost:5173");
+
+        await page.getByTestId("username").fill("mluukkai");
+        await page.getByTestId("password").fill("salainen");
+
+        await page.getByRole("button", { name: "login" }).click();
+
+        const succesfulLocator = await page.getByText(
+            "Matti Luukkainen logged in"
+        );
+        await expect(succesfulLocator).toBeVisible();
+    });
+
+    test("a new blog can be created", async ({ page }) => {
+        await page.getByRole("button", { name: "new blog" }).click();
+
+        await page.getByTestId("title").fill("Meaning of life");
+        await page.getByTestId("author").fill("mikko mallikas");
+        await page.getByTestId("url").fill("hs.fi");
+
+        await page.getByRole("button", { name: "create" }).click();
+
+        await expect(
+            page.getByText("Meaning of life mikko mallikas")
+        ).toBeVisible();
+    });
+});
