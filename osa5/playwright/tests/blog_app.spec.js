@@ -1,11 +1,11 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-const { loginWith } = require("./helper");
+const { loginWith, createBlog } = require("./helper");
 
 describe("Blog app", () => {
     // testien alustus
     beforeEach(async ({ page, request }) => {
-        await request.post("http:localhost:3003/api/testing/reset");
-        await request.post("http://localhost:3003/api/users", {
+        await request.post("/api/testing/reset");
+        await request.post("/api/users", {
             data: {
                 name: "Matti Luukkainen",
                 username: "mluukkai",
@@ -13,7 +13,7 @@ describe("Blog app", () => {
             },
         });
 
-        await page.goto("http://localhost:5173");
+        await page.goto("/");
     });
 
     test("Login form is shown", async ({ page }) => {
@@ -47,9 +47,10 @@ describe("Blog app", () => {
 });
 
 describe("When logged in", () => {
+    // testien alustus
     beforeEach(async ({ page, request }) => {
-        await request.post("http:localhost:3003/api/testing/reset");
-        await request.post("http://localhost:3003/api/users", {
+        await request.post("/api/testing/reset");
+        await request.post("/api/users", {
             data: {
                 name: "Matti Luukkainen",
                 username: "mluukkai",
@@ -57,7 +58,7 @@ describe("When logged in", () => {
             },
         });
 
-        await page.goto("http://localhost:5173");
+        await page.goto("/");
 
         loginWith(page, "mluukkai", "salainen");
 
@@ -68,13 +69,7 @@ describe("When logged in", () => {
     });
 
     test("a new blog can be created", async ({ page }) => {
-        await page.getByRole("button", { name: "new blog" }).click();
-
-        await page.getByTestId("title").fill("Meaning of life");
-        await page.getByTestId("author").fill("mikko mallikas");
-        await page.getByTestId("url").fill("hs.fi");
-
-        await page.getByRole("button", { name: "create" }).click();
+        await createBlog(page, "Meaning of life", "mikko mallikas", "hs.fi");
 
         await expect(
             page.getByText("Meaning of life mikko mallikas")
