@@ -47,4 +47,18 @@ export const createAnecdote = (content) => {
   };
 };
 
+// react thunk voting
+export const updateAnecdote = (anecdote) => {
+  return async (dispatch) => {
+    // dispatching local change
+    dispatch(voteAnecdote(anecdote.id));
+    const changedAnecdote = {
+      ...anecdote,
+      votes: anecdote.votes + 1
+    };
+    // putting into server
+    await anecdoteService.update(changedAnecdote);
+  };
+};
+
 export default anecdoteSlice.reducer;
