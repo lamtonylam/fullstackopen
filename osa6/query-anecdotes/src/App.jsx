@@ -3,21 +3,25 @@ import Notification from './components/Notification';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 
+import { getAnecdotes } from './requests';
+
 const App = () => {
   const handleVote = (anecdote) => {
     console.log('vote');
   };
 
   const result = useQuery({
-    queryKey: ['notes'],
-    queryFn: () => axios.get('http://localhost:3001/anecdotes').then((res) => res.data),
+    queryKey: ['anecdotes'],
+    queryFn: getAnecdotes,
     retry: false
   });
   console.log(JSON.parse(JSON.stringify(result)));
 
   // if loading anecdotes is error. ie, server is down
   if (result.isError) {
-    return <div>anecdote service is not available due to problems in server</div>;
+    return (
+      <div>anecdote service is not available due to problems in server</div>
+    );
   }
 
   // if loading anecodotes is still loading, return loading text
