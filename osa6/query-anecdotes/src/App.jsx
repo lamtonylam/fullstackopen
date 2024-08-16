@@ -3,9 +3,13 @@ import Notification from './components/Notification';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getAnecdotes, updateAnecdote } from './requests';
+import { useContext, useReducer } from 'react';
+import NotificationContext from './NotificationContext';
 
 const App = () => {
   const queryClient = useQueryClient();
+
+  const [notification, notificationDispatch] = useContext(NotificationContext);
 
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
@@ -16,6 +20,14 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
+
+    notificationDispatch({
+      type: 'addNotification',
+      payload: `Voted ${anecdote.content}`
+    });
+    setTimeout(() => {
+      notificationDispatch({ type: 'clearNotification' });
+    }, 5000);
   };
 
   const result = useQuery({
