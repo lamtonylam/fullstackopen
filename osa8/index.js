@@ -118,17 +118,15 @@ const resolvers = {
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    allBooks: (root, { author, genre }) => {
       let booksCopy = books;
 
-      if (args.author) {
-        booksCopy = booksCopy.filter((book) => book.author === args.author);
+      if (author) {
+        booksCopy = booksCopy.filter((book) => book.author === author);
       }
 
-      if (args.genre) {
-        booksCopy = booksCopy.filter((book) =>
-          book.genres.includes(args.genre)
-        );
+      if (genre) {
+        booksCopy = booksCopy.filter((book) => book.genres.includes(genre));
       }
 
       return booksCopy;
@@ -137,24 +135,24 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: (root, args) => {
-      const foundAuthor = authors.find((author) => author.name === args.author);
+    addBook: (root, { title, author, published, genres }) => {
+      const foundAuthor = authors.find((a) => a.name === author);
 
       if (!foundAuthor) {
-        const author = { name: args.author, id: uuid() };
-        authors = authors.concat(author);
+        const newAuthor = { name: author, id: uuid() };
+        authors = authors.concat(newAuthor);
       }
 
-      const book = { ...args, id: uuid() };
+      const book = { title, author, published, genres, id: uuid() };
       books = books.concat(book);
 
       return book;
     },
-    editAuthor: (root, args) => {
-      const foundAuthor = authors.find((author) => author.name === args.name);
+    editAuthor: (root, { name, setBornTo }) => {
+      const foundAuthor = authors.find((author) => author.name === name);
 
       if (foundAuthor) {
-        const updatedAuthor = { ...foundAuthor, born: args.setBornTo };
+        const updatedAuthor = { ...foundAuthor, born: setBornTo };
         authors.concat(updatedAuthor);
         return updatedAuthor;
       }
