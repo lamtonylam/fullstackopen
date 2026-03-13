@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { v1 as uuid } from 'uuid';
 
 let authors = [
   {
@@ -101,6 +102,15 @@ const typeDefs = /* GraphQL */ `
     allBooks(author: String, genre: String): [Book!]
     allAuthors: [Author!]!
   }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]
+    ): Book
+  }
 `;
 
 const resolvers = {
@@ -123,6 +133,22 @@ const resolvers = {
       return booksCopy;
     },
     allAuthors: () => authors,
+  },
+
+  Mutation: {
+    addBook: (root, args) => {
+      const foundAuthor = authors.find((author) => author.name === args.author);
+
+      if (!foundAuthor) {
+        const author = { name: args.author, id: uuid() };
+        authors = authors.concat(author);
+      }
+
+      const book = { ...args, id: uuid() };
+      books = books.concat(book);
+
+      return book;
+    },
   },
 
   Author: {
