@@ -153,7 +153,9 @@ const resolvers = {
 
       if (foundAuthor) {
         const updatedAuthor = { ...foundAuthor, born: setBornTo };
-        authors.concat(updatedAuthor);
+        authors = authors.map((author) =>
+          author.name === name ? updatedAuthor : author
+        );
         return updatedAuthor;
       }
 
