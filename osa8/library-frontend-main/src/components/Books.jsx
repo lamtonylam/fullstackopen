@@ -1,9 +1,10 @@
-const Books = (props) => {
-  if (!props.show) {
-    return null
-  }
+import { useQuery } from '@apollo/client/react';
+import { getBooksQuery } from '../queries';
 
-  const books = []
+const Books = () => {
+  const result = useQuery(getBooksQuery);
+
+  const books = result.data?.allBooks ?? [];
 
   return (
     <div>
@@ -26,7 +27,7 @@ const Books = (props) => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;
