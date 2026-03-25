@@ -4,7 +4,6 @@ export const getBooksQuery = gql`
   query {
     allBooks {
       id
-      author
       published
       title
     }
