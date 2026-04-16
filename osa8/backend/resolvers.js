@@ -1,6 +1,8 @@
 import { GraphQLError } from 'graphql';
 import Book from './models/book.js';
 import Author from './models/author.js';
+import User from './models/user.js';
+import jwt from 'jsonwebtoken';
 
 const resolvers = {
   Query: {
@@ -28,10 +30,22 @@ const resolvers = {
       return Book.find();
     },
     allAuthors: async () => await Author.find(),
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
 
   Mutation: {
     addBook: async (root, { title, author, published, genres }) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'UNAUTHENTICATED',
+          },
+        });
+      }
+
       const foundBook = await Book.findOne({ title: title });
 
       if (foundBook) {
@@ -82,6 +96,15 @@ const resolvers = {
       return savedBook.populate('author');
     },
     editAuthor: async (root, { name, setBornTo }) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'UNAUTHENTICATED',
+          },
+        });
+      }
+
       const foundAuthor = await Author.findOne({ name: name });
 
       if (foundAuthor) {
@@ -90,6 +113,48 @@ const resolvers = {
       }
 
       return null;
+    },
+    createUser: async (root, { username, favoriteGenre }) => {
+      const foundUser = await User.findOne({ username: username });
+
+      if (foundUser) {
+        throw new GraphQLError('user already exists', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: username,
+          },
+        });
+      }
+
+      const user = new User({ username: username, favoriteGenre });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError(`creating user failed: ${error.message}`, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: username,
+            error,
+          },
+        });
+      });
+    },
+    login: async (root, { username, password }) => {
+      const user = await User.findOne({ username: username });
+
+      if (!user || password !== 'salasana') {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
   },
 
